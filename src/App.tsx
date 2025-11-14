@@ -8,12 +8,8 @@ import { skinStorage } from './utils/skinStorage';
 import { exportSkinAsPNG, createBlankSkin } from './utils/skinExport';
 import './App.css';
 
-type ViewMode = 'generator' | 'editor' | 'preview';
-
 function App() {
   const [currentSkin, setCurrentSkin] = useState<MinecraftSkin | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>('generator');
-  const [showHistory, setShowHistory] = useState(false);
 
   // Initialize with a blank skin
   useEffect(() => {
@@ -37,7 +33,6 @@ function App() {
 
     setCurrentSkin(newSkin);
     skinStorage.saveSkin(newSkin);
-    setViewMode('preview');
   }, []);
 
   const handleSkinChange = useCallback((newSkinData: string) => {
@@ -60,7 +55,6 @@ function App() {
 
     if (skin) {
       setCurrentSkin(skin);
-      setViewMode('preview');
     }
   }, []);
 
@@ -81,7 +75,6 @@ function App() {
     };
 
     setCurrentSkin(newSkin);
-    setViewMode('editor');
   }, []);
 
   return (
@@ -92,46 +85,19 @@ function App() {
       </header>
 
       <div className="app-container">
-        {/* Sidebar */}
-        <aside className={`sidebar ${showHistory ? 'show' : ''}`}>
-          <button
-            className="toggle-history"
-            onClick={() => setShowHistory(!showHistory)}
-          >
-            {showHistory ? '◀' : '▶'} 히스토리
-          </button>
-          {showHistory && (
-            <HistoryPanel
-              onSkinSelect={handleSkinSelect}
-              currentSkinId={currentSkin?.id}
-            />
-          )}
+        {/* Left Sidebar - History Panel */}
+        <aside className="sidebar">
+          <div className="sidebar-header">
+            <h3>📚 히스토리</h3>
+          </div>
+          <HistoryPanel
+            onSkinSelect={handleSkinSelect}
+            currentSkinId={currentSkin?.id}
+          />
         </aside>
 
-        {/* Main Content */}
+        {/* Main Content Area */}
         <main className="main-content">
-          {/* View Mode Tabs */}
-          <div className="view-tabs">
-            <button
-              className={viewMode === 'generator' ? 'active' : ''}
-              onClick={() => setViewMode('generator')}
-            >
-              🤖 AI 생성
-            </button>
-            <button
-              className={viewMode === 'editor' ? 'active' : ''}
-              onClick={() => setViewMode('editor')}
-            >
-              ✏️ 에디터
-            </button>
-            <button
-              className={viewMode === 'preview' ? 'active' : ''}
-              onClick={() => setViewMode('preview')}
-            >
-              👀 3D 프리뷰
-            </button>
-          </div>
-
           {/* Action Buttons */}
           <div className="action-buttons">
             <button onClick={handleNewSkin} className="action-button">
@@ -146,50 +112,56 @@ function App() {
             </button>
           </div>
 
-          {/* Content Area */}
-          <div className="content-area">
-            {viewMode === 'generator' && (
-              <SkinGenerator onSkinGenerated={handleSkinGenerated} />
-            )}
-
-            {viewMode === 'editor' && currentSkin && (
-              <div className="editor-view">
-                <SkinEditor
-                  skinData={currentSkin.imageData}
-                  onSkinChange={handleSkinChange}
-                  scale={8}
-                />
+          {/* Grid Layout for Components */}
+          <div className="desktop-grid">
+            {/* Left Column: Generator and Editor */}
+            <div className="left-column">
+              {/* AI Generator */}
+              <div className="generator-section section-card">
+                <h2>🤖 AI 스킨 생성</h2>
+                <SkinGenerator onSkinGenerated={handleSkinGenerated} />
               </div>
-            )}
 
-            {viewMode === 'preview' && currentSkin && (
-              <div className="preview-view">
-                <div className="preview-container">
-                  <SkinViewer3D
+              {/* Editor */}
+              {currentSkin && (
+                <div className="editor-section section-card">
+                  <h2>✏️ 스킨 에디터</h2>
+                  <SkinEditor
                     skinData={currentSkin.imageData}
-                    width={600}
-                    height={600}
-                    autoRotate={true}
+                    onSkinChange={handleSkinChange}
+                    scale={6}
                   />
                 </div>
-                <div className="preview-info">
-                  <h3>{currentSkin.name}</h3>
-                  {currentSkin.prompt && (
-                    <p className="skin-prompt">
-                      <strong>프롬프트:</strong> {currentSkin.prompt}
+              )}
+            </div>
+
+            {/* Right Column: 3D Preview */}
+            <div className="right-column">
+              {currentSkin && (
+                <div className="preview-section section-card">
+                  <h2>👀 3D 프리뷰</h2>
+                  <div className="preview-container">
+                    <SkinViewer3D
+                      skinData={currentSkin.imageData}
+                      width={450}
+                      height={450}
+                      autoRotate={true}
+                    />
+                  </div>
+                  <div className="preview-info">
+                    <h3>{currentSkin.name}</h3>
+                    {currentSkin.prompt && (
+                      <p className="skin-prompt">
+                        <strong>프롬프트:</strong> {currentSkin.prompt}
+                      </p>
+                    )}
+                    <p className="skin-date">
+                      생성일: {new Date(currentSkin.createdAt).toLocaleString('ko-KR')}
                     </p>
-                  )}
-                  <p className="skin-date">
-                    생성일: {new Date(currentSkin.createdAt).toLocaleString('ko-KR')}
-                  </p>
-                  <div className="preview-actions">
-                    <button onClick={() => setViewMode('editor')} className="edit-button">
-                      ✏️ 편집하기
-                    </button>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </main>
       </div>
