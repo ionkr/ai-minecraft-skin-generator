@@ -1,73 +1,154 @@
-# React + TypeScript + Vite
+# 🎨 AI Minecraft Skin Generator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AI 기술을 활용하여 독특한 마인크래프트 스킨을 생성하고 편집할 수 있는 웹 애플리케이션입니다.
 
-Currently, two official plugins are available:
+## ✨ 주요 기능
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 🤖 AI 스킨 생성
+- 텍스트 프롬프트를 입력하여 AI로 마인크래프트 스킨 자동 생성
+- 한국어 및 영어 프롬프트 지원
+- 예시 프롬프트 제공으로 쉬운 시작
 
-## React Compiler
+### ✏️ 직관적인 픽셀 에디터
+- 64x64 픽셀 해상도의 정확한 마인크래프트 스킨 포맷
+- 다양한 편집 도구:
+  - ✏️ 연필 도구
+  - 🧹 지우개 도구
+  - 🪣 채우기 도구
+  - 💉 색상 추출 도구
+- 브러시 크기 조절 (1-8 픽셀)
+- 컬러 피커로 정확한 색상 선택
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 👀 3D 프리뷰
+- Three.js 기반 실시간 3D 스킨 미리보기
+- 자동 회전 및 애니메이션
+- 마우스로 회전, 줌 조작 가능
 
-## Expanding the ESLint configuration
+### 💾 히스토리 관리
+- 로컬스토리지를 활용한 자동 저장
+- 최대 50개의 스킨 히스토리 유지
+- 각 스킨의 프롬프트 및 생성일 기록
+- 간편한 불러오기 및 삭제 기능
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 📥 내보내기
+- PNG 파일로 스킨 저장
+- 마인크래프트에서 바로 사용 가능한 64x64 포맷
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🚀 시작하기
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 필수 요구사항
+- Node.js 18+
+- npm 또는 yarn
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 설치 및 실행
+
+```bash
+# 의존성 설치
+npm install
+
+# 개발 서버 실행
+npm run dev
+
+# 프로덕션 빌드
+npm run build
+
+# 빌드된 앱 미리보기
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🎯 사용 방법
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 1. AI로 스킨 생성하기
+1. "🤖 AI 생성" 탭을 선택합니다
+2. 원하는 스킨의 컨셉을 텍스트로 입력합니다
+   - 예: "스케이트를 타는 힙한 스트릿웨어의 남성"
+3. "스킨 생성" 버튼을 클릭합니다
+4. 생성된 스킨이 자동으로 3D 프리뷰에 표시됩니다
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 2. 스킨 편집하기
+1. "✏️ 에디터" 탭으로 이동합니다
+2. 도구바에서 원하는 도구를 선택합니다
+3. 캔버스에서 직접 픽셀을 편집합니다
+4. 변경사항은 자동으로 저장됩니다
+
+### 3. 3D로 확인하기
+1. "👀 3D 프리뷰" 탭에서 스킨을 3D로 확인합니다
+2. 마우스로 드래그하여 회전시킬 수 있습니다
+3. 스크롤로 줌 인/아웃 가능합니다
+
+### 4. 스킨 저장하기
+1. "💾 PNG 저장" 버튼을 클릭합니다
+2. 64x64 PNG 파일이 다운로드됩니다
+3. 마인크래프트 게임에서 해당 파일을 업로드하여 사용합니다
+
+### 5. 히스토리 관리
+1. 왼쪽 "▶ 히스토리" 버튼을 클릭하여 패널을 엽니다
+2. 저장된 스킨 목록을 확인합니다
+3. 썸네일을 클릭하여 불러올 수 있습니다
+4. ✕ 버튼으로 삭제할 수 있습니다
+
+## 🛠️ 기술 스택
+
+- **Frontend Framework**: React 19 + TypeScript
+- **Build Tool**: Vite
+- **3D Rendering**: Three.js + skinview3d
+- **Styling**: CSS3 (Gradient backgrounds, Flexbox, Grid)
+- **Storage**: LocalStorage API
+- **Canvas API**: 픽셀 편집 및 이미지 처리
+
+## 📁 프로젝트 구조
+
 ```
+src/
+├── components/          # React 컴포넌트
+│   ├── SkinGenerator.tsx    # AI 프롬프트 입력 및 생성
+│   ├── SkinEditor.tsx       # 픽셀 에디터
+│   ├── SkinViewer3D.tsx     # 3D 프리뷰
+│   └── HistoryPanel.tsx     # 히스토리 관리
+├── utils/              # 유틸리티 함수
+│   ├── skinGenerator.ts     # AI 스킨 생성 로직
+│   ├── skinStorage.ts       # 로컬스토리지 관리
+│   └── skinExport.ts        # PNG 내보내기
+├── types/              # TypeScript 타입 정의
+│   └── skin.ts
+├── App.tsx             # 메인 앱 컴포넌트
+├── App.css             # 스타일시트
+└── main.tsx            # 앱 엔트리 포인트
+```
+
+## 🎨 디자인 특징
+
+- 모던하고 직관적인 UI/UX
+- 그라데이션 배경과 글래스모피즘 효과
+- 반응형 디자인 (모바일/태블릿/데스크톱)
+- 부드러운 애니메이션과 트랜지션
+- 접근성을 고려한 버튼 및 컨트롤
+
+## 💡 팁
+
+- **색상 선택**: 프롬프트에 구체적인 색상을 명시하면 더 정확한 결과를 얻을 수 있습니다
+- **디테일**: 의상, 액세서리, 스타일 등을 자세히 설명할수록 좋습니다
+- **편집**: AI 생성 후 에디터에서 세부적인 조정이 가능합니다
+- **히스토리**: 마음에 드는 스킨은 자동으로 저장되므로 언제든 다시 불러올 수 있습니다
+
+## 🔧 향후 개선 계획
+
+- [ ] 실제 AI API 통합 (DALL-E, Stable Diffusion)
+- [ ] 스킨 템플릿 라이브러리
+- [ ] 레이어 시스템
+- [ ] 실행 취소/다시 실행 기능
+- [ ] 다양한 마인크래프트 스킨 모델 지원 (Steve/Alex)
+- [ ] 커뮤니티 스킨 공유 기능
+- [ ] 스킨 애니메이션 프리뷰
+
+## 📝 라이선스
+
+MIT License
+
+## 👤 제작자
+
+AI Minecraft Skin Generator
+
+---
+
+**즐거운 스킨 제작 되세요!** 🎮✨
