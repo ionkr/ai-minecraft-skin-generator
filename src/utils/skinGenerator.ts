@@ -144,9 +144,9 @@ CREATE RICH, DETAILED DESIGNS with multiple colors and layers for EVERY SURFACE.
   "legs": {
     "primary": "#hexcolor (pants/main)",
     "secondary": "#hexcolor (secondary)",
-    "shoes": "#hexcolor (REQUIRED - footwear color)",
-    "shoeLaces": "#hexcolor (optional - shoe detail)",
-    "shoesSole": "#hexcolor (optional - shoe bottom)",
+    "shoes": "#hexcolor (REQUIRED - footwear color - VERY IMPORTANT for overall look)",
+    "shoeLaces": "#hexcolor (HIGHLY RECOMMENDED - shoe lace detail adds realism)",
+    "shoesSole": "#hexcolor (HIGHLY RECOMMENDED - shoe sole/bottom for depth)",
     "kneePads": "#hexcolor (optional - knee details)",
     "pockets": "#hexcolor (optional - pants pockets)",
     "belt": "#hexcolor (optional - pants belt)"
@@ -175,6 +175,12 @@ CRITICAL DESIGN GUIDELINES:
 11. **BACK DETAILS** - The back of clothing should have: collar continuation, back pockets, logos, hood details, jacket seams, belt loops
 12. **SIDE DETAILS** - Sides should have: sleeve seams, pants seams, color panels, racing stripes
 13. **HAIR FROM ALL ANGLES** - Hair should have highlights/shadows on top, sides, and back - not just front
+14. **SHOE DETAILS ARE CRITICAL** - Shoes occupy the bottom 4 pixels of legs (coordinates 28-32 for right, 60-64 for left) and are HIGHLY VISIBLE in 3D view. ALWAYS include:
+    * Base shoe color (shoes field - REQUIRED)
+    * Contrasting laces (shoeLaces field - HIGHLY RECOMMENDED)
+    * Different colored sole (shoesSole field - HIGHLY RECOMMENDED for depth)
+    * For branded shoes (Nike, Adidas, etc.), use accent colors to suggest logos/swooshes
+    * Common combinations: white shoes + black laces + gum sole, black shoes + white laces + black sole, red shoes + white laces + white sole
 
 EXAMPLES OF GOOD DETAIL (ALL ANGLES):
 - A "ninja" should have:
@@ -182,16 +188,24 @@ EXAMPLES OF GOOD DETAIL (ALL ANGLES):
   * Back: Sword/shuriken holder, back belt straps
   * Sides: Armor plates, side belt details
   * Hair: Black with subtle blue highlights on all sides
+  * Shoes: Black ninja boots with straps/wraps, darker sole
 - A "firefighter" should have:
   * Front: Yellow reflective stripes, badge, buttons
   * Back: "FIRE DEPT" text or logo, reflective X pattern
   * Sides: Side pockets, reflective vertical stripes
   * Helmet: Yellow/red on all sides with visor detail
+  * Boots: Black heavy-duty boots, yellow reflective strip, thick rubber sole
 - A "casual teenager" should have:
   * Front: Hoodie with logo, drawstrings, front pocket
   * Back: Hoodie with back graphic/text, hood detail
   * Sides: Hoodie side panels in contrasting color, sleeve cuffs
   * Jeans: Front pockets, back pockets, side seams with contrasting thread
+  * Sneakers: White/colored shoes with contrasting laces and sole (e.g., white body, black laces, gum sole)
+- A "wizard with NIKE shoes" should have:
+  * Robe: Purple/blue flowing robe with mystical patterns
+  * Hat: Pointed wizard hat with stars/moons
+  * Shoes: White/colorful sneakers (NIKE style) with swoosh-like accent, colored laces, contrasting sole
+  * Staff accessory or magical details on clothing
 
 Be MAXIMALLY creative and detailed! Fill in ALL optional fields when they enhance the design. Remember: players will see your skin from EVERY angle!`;
 
