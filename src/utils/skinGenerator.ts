@@ -584,51 +584,86 @@ function drawSkinTemplate(
   colors: { primary: string; secondary: string; accent: string; skin: string },
   style: { hasHat: boolean; hasGlasses: boolean; hasBeard: boolean; clothing: string }
 ): void {
-  // Head base (front face)
-  ctx.fillStyle = colors.skin;
-  ctx.fillRect(8, 8, 8, 8);   // Top of head
-  ctx.fillRect(8, 16, 8, 8);  // Front face
+  // ===== HEAD (8x8x8 pixels) =====
 
-  // Head sides
-  ctx.fillStyle = darkenColor(colors.skin, 0.9);
-  ctx.fillRect(0, 16, 8, 8);  // Right side
-  ctx.fillRect(16, 16, 8, 8); // Left side
+  // Head - Top (8,0 to 16,8)
+  ctx.fillStyle = darkenColor(colors.skin, 0.95);
+  ctx.fillRect(8, 0, 8, 8);
 
-  // Head back
+  // Head - Bottom (16,0 to 24,8)
   ctx.fillStyle = darkenColor(colors.skin, 0.85);
-  ctx.fillRect(24, 16, 8, 8);
+  ctx.fillRect(16, 0, 8, 8);
 
-  // Hair/Hat layer (second layer)
-  if (style.hasHat) {
-    ctx.fillStyle = colors.accent;
-    ctx.fillRect(40, 8, 8, 8);  // Hat top
-    ctx.fillRect(40, 16, 8, 4); // Hat front
-  } else {
-    // Hair
-    ctx.fillStyle = colors.secondary;
-    ctx.fillRect(40, 8, 8, 8);
-    ctx.fillRect(40, 16, 8, 3);
-  }
+  // Head - Right side (0,8 to 8,16)
+  ctx.fillStyle = darkenColor(colors.skin, 0.9);
+  ctx.fillRect(0, 8, 8, 8);
 
-  // Eyes
+  // Head - Front face (8,8 to 16,16)
+  ctx.fillStyle = colors.skin;
+  ctx.fillRect(8, 8, 8, 8);
+
+  // Head - Left side (16,8 to 24,16)
+  ctx.fillStyle = darkenColor(colors.skin, 0.9);
+  ctx.fillRect(16, 8, 8, 8);
+
+  // Head - Back (24,8 to 32,16)
+  ctx.fillStyle = darkenColor(colors.skin, 0.85);
+  ctx.fillRect(24, 8, 8, 8);
+
+  // Eyes (on front face at 8,8-16,16)
   ctx.fillStyle = '#2c3e50';
-  ctx.fillRect(10, 18, 1, 1); // Left eye
-  ctx.fillRect(13, 18, 1, 1); // Right eye
+  ctx.fillRect(10, 10, 2, 2); // Left eye
+  ctx.fillRect(14, 10, 2, 2); // Right eye
 
   if (style.hasGlasses) {
     ctx.fillStyle = '#34495e';
-    ctx.fillRect(9, 18, 3, 2);
-    ctx.fillRect(12, 18, 3, 2);
+    ctx.fillRect(9, 10, 3, 2);  // Left lens
+    ctx.fillRect(14, 10, 3, 2); // Right lens
+    ctx.fillRect(12, 10, 2, 1); // Bridge
   }
 
   // Mouth
   ctx.fillStyle = darkenColor(colors.skin, 0.8);
-  ctx.fillRect(10, 21, 4, 1);
+  ctx.fillRect(10, 13, 4, 1);
+  ctx.fillRect(11, 14, 2, 1);
 
   // Beard
   if (style.hasBeard) {
     ctx.fillStyle = colors.secondary;
-    ctx.fillRect(9, 22, 6, 2);
+    ctx.fillRect(9, 14, 6, 2);
+    // Add to sides
+    ctx.fillRect(1, 14, 6, 2);
+    ctx.fillRect(17, 14, 6, 2);
+  }
+
+  // ===== HAIR/HAT LAYER (Second layer - overlay) =====
+  // Hat layer - Top (40,0 to 48,8)
+  ctx.fillStyle = colors.secondary;
+  ctx.fillRect(40, 0, 8, 8);
+
+  // Hat layer - Bottom (48,0 to 56,8)
+  ctx.fillRect(48, 0, 8, 8);
+
+  // Hat layer - Right (32,8 to 40,16)
+  ctx.fillStyle = darkenColor(colors.secondary, 0.9);
+  ctx.fillRect(32, 8, 8, 8);
+
+  // Hat layer - Front (40,8 to 48,16)
+  ctx.fillStyle = colors.secondary;
+  ctx.fillRect(40, 8, 8, 8);
+
+  // Hat layer - Left (48,8 to 56,16)
+  ctx.fillStyle = darkenColor(colors.secondary, 0.9);
+  ctx.fillRect(48, 8, 8, 8);
+
+  // Hat layer - Back (56,8 to 64,16)
+  ctx.fillStyle = darkenColor(colors.secondary, 0.85);
+  ctx.fillRect(56, 8, 8, 8);
+
+  // Hat accessory
+  if (style.hasHat) {
+    ctx.fillStyle = colors.accent;
+    ctx.fillRect(40, 8, 8, 3); // Cap brim on front
   }
 
   // Body (torso)
