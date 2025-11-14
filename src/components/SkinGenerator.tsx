@@ -51,8 +51,6 @@ export function SkinGenerator({ onSkinGenerated }: SkinGeneratorProps) {
 
   return (
     <div className="skin-generator">
-      <h2>AI 스킨 생성</h2>
-
       <div className="prompt-input-section">
         <textarea
           value={prompt}
