@@ -38,32 +38,63 @@ AI 기술을 활용하여 독특한 마인크래프트 스킨을 생성하고 �
 
 ### 필수 요구사항
 - Node.js 18+
-- npm 또는 yarn
+- pnpm (권장) 또는 npm
+- Anthropic API 키 (AI 모드 사용 시)
 
 ### 설치 및 실행
 
 ```bash
 # 의존성 설치
+pnpm install
+# 또는
 npm install
 
+# 환경 변수 설정 (AI 모드 사용 시)
+cp .env.example .env
+# .env 파일을 열어 VITE_ANTHROPIC_API_KEY에 실제 API 키를 입력하세요
+
 # 개발 서버 실행
+pnpm dev
+# 또는
 npm run dev
 
 # 프로덕션 빌드
+pnpm build
+# 또는
 npm run build
 
 # 빌드된 앱 미리보기
+pnpm preview
+# 또는
 npm run preview
 ```
+
+### Anthropic API 키 발급
+
+1. [Anthropic Console](https://console.anthropic.com/)에 접속하여 계정을 만듭니다
+2. API Keys 섹션에서 새 API 키를 생성합니다
+3. 생성된 키를 복사하여 `.env` 파일에 붙여넣습니다:
+   ```
+   VITE_ANTHROPIC_API_KEY=sk-ant-...
+   ```
+
+> **참고**: API 키 없이도 데모 모드로 기본적인 스킨 생성이 가능합니다. 하지만 AI 모드를 사용하면 훨씬 더 정확하고 디테일한 스킨을 생성할 수 있습니다.
 
 ## 🎯 사용 방법
 
 ### 1. AI로 스킨 생성하기
 1. "🤖 AI 생성" 탭을 선택합니다
-2. 원하는 스킨의 컨셉을 텍스트로 입력합니다
+2. (선택사항) API 키가 설정되어 있다면 "AI 모드 사용" 체크박스를 활성화합니다
+3. 원하는 스킨의 컨셉을 텍스트로 입력합니다
    - 예: "스케이트를 타는 힙한 스트릿웨어의 남성"
-3. "스킨 생성" 버튼을 클릭합니다
-4. 생성된 스킨이 자동으로 3D 프리뷰에 표시됩니다
+   - 예: "Red hoodie with blue jeans and sneakers"
+   - 예: "보라색 마법사, 뾰족한 모자 착용"
+4. "스킨 생성" 버튼을 클릭합니다
+5. 생성된 스킨이 자동으로 3D 프리뷰에 표시됩니다
+
+**AI 모드 vs 데모 모드**:
+- **AI 모드**: Claude Haiku 4.5를 사용하여 프롬프트를 분석하고 매우 디테일한 색상 스킴을 생성합니다. 더 정확하고 창의적인 결과를 얻을 수 있습니다.
+- **데모 모드**: 키워드 기반 알고리즘으로 기본적인 스킨을 생성합니다. API 키 없이도 사용 가능합니다.
 
 ### 2. 스킨 편집하기
 1. "✏️ 에디터" 탭으로 이동합니다
@@ -91,6 +122,7 @@ npm run preview
 
 - **Frontend Framework**: React 19 + TypeScript
 - **Build Tool**: Vite
+- **AI Integration**: Anthropic Claude API (Haiku 4.5)
 - **3D Rendering**: Three.js + skinview3d
 - **Styling**: CSS3 (Gradient backgrounds, Flexbox, Grid)
 - **Storage**: LocalStorage API
@@ -133,13 +165,15 @@ src/
 
 ## 🔧 향후 개선 계획
 
-- [ ] 실제 AI API 통합 (DALL-E, Stable Diffusion)
+- [x] AI API 통합 (Anthropic Claude Haiku 4.5)
+- [ ] 백엔드 프록시 서버 구축 (API 키 보안 강화)
+- [ ] 더 다양한 AI 모델 지원 (이미지 생성 모델)
 - [ ] 스킨 템플릿 라이브러리
 - [ ] 레이어 시스템
 - [ ] 실행 취소/다시 실행 기능
 - [ ] 다양한 마인크래프트 스킨 모델 지원 (Steve/Alex)
 - [ ] 커뮤니티 스킨 공유 기능
-- [ ] 스킨 애니메이션 프리뷰
+- [ ] 스킨 애니메이션 프리뷰 확장
 
 ## 📝 라이선스
 
