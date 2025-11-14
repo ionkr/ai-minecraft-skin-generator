@@ -732,6 +732,109 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
     }
   }
 
+  // ===== SECOND LAYER / OVERLAYS (Minecraft 1.8+ format) =====
+  // These layers appear slightly above the base layer for clothing/sleeve effects
+
+  // Right Arm Second Layer (Sleeve overlay)
+  // Top (44,32 to 48,36)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.95);
+  ctx.fillRect(44, 32, 4, 4);
+
+  // Bottom (48,32 to 52,36)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.85);
+  ctx.fillRect(48, 32, 4, 4);
+
+  // Right side (40,36 to 44,48)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.9);
+  ctx.fillRect(40, 36, 4, 12);
+
+  // Front (44,36 to 48,48)
+  ctx.fillStyle = scheme.arms.clothing;
+  ctx.fillRect(44, 36, 4, 12);
+
+  // Left side (48,36 to 52,48)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.9);
+  ctx.fillRect(48, 36, 4, 12);
+
+  // Back (52,36 to 56,48)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.85);
+  ctx.fillRect(52, 36, 4, 12);
+
+  // Left Arm Second Layer (Sleeve overlay)
+  // Top (52,48 to 56,52)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.95);
+  ctx.fillRect(52, 48, 4, 4);
+
+  // Bottom (56,48 to 60,52)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.85);
+  ctx.fillRect(56, 48, 4, 4);
+
+  // Right side (48,52 to 52,64)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.9);
+  ctx.fillRect(48, 52, 4, 12);
+
+  // Front (52,52 to 56,64)
+  ctx.fillStyle = scheme.arms.clothing;
+  ctx.fillRect(52, 52, 4, 12);
+
+  // Left side (56,52 to 60,64)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.9);
+  ctx.fillRect(56, 52, 4, 12);
+
+  // Back (60,52 to 64,64)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.85);
+  ctx.fillRect(60, 52, 4, 12);
+
+  // Right Leg Second Layer (Pants overlay)
+  // Top (4,32 to 8,36)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.95);
+  ctx.fillRect(4, 32, 4, 4);
+
+  // Bottom (8,32 to 12,36)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
+  ctx.fillRect(8, 32, 4, 4);
+
+  // Right side (0,36 to 4,48)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
+  ctx.fillRect(0, 36, 4, 12);
+
+  // Front (4,36 to 8,48)
+  ctx.fillStyle = scheme.legs.primary;
+  ctx.fillRect(4, 36, 4, 12);
+
+  // Left side (8,36 to 12,48)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
+  ctx.fillRect(8, 36, 4, 12);
+
+  // Back (12,36 to 16,48)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
+  ctx.fillRect(12, 36, 4, 12);
+
+  // Left Leg Second Layer (Pants overlay)
+  // Top (4,48 to 8,52)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.95);
+  ctx.fillRect(4, 48, 4, 4);
+
+  // Bottom (8,48 to 12,52)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
+  ctx.fillRect(8, 48, 4, 4);
+
+  // Right side (0,52 to 4,64)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
+  ctx.fillRect(0, 52, 4, 12);
+
+  // Front (4,52 to 8,64)
+  ctx.fillStyle = scheme.legs.primary;
+  ctx.fillRect(4, 52, 4, 12);
+
+  // Left side (8,52 to 12,64)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
+  ctx.fillRect(8, 52, 4, 12);
+
+  // Back (12,52 to 16,64)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
+  ctx.fillRect(12, 52, 4, 12);
+
   // Add texture and details
   addPixelArtDetails(ctx, scheme);
 }
