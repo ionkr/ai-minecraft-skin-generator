@@ -1023,6 +1023,7 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   }
 
   // Right Leg Second Layer (Pants overlay)
+  // IMPORTANT: Only cover top 8 pixels, leave bottom 4 pixels (shoes) visible
   // Top (4,32 to 8,36)
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.95);
   ctx.fillRect(4, 32, 4, 4);
@@ -1031,40 +1032,40 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
   ctx.fillRect(8, 32, 4, 4);
 
-  // Right side (0,36 to 4,48)
+  // Right side (0,36 to 4,44) - Only 8 pixels, not 12
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
-  ctx.fillRect(0, 36, 4, 12);
+  ctx.fillRect(0, 36, 4, 8);
   // Add side details to overlay
   if (scheme.legs.secondary) {
     ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.9);
-    ctx.fillRect(1, 36, 2, 12);
+    ctx.fillRect(1, 36, 2, 8);
   }
 
-  // Front (4,36 to 8,48)
+  // Front (4,36 to 8,44) - Only 8 pixels, not 12
   ctx.fillStyle = scheme.legs.primary;
-  ctx.fillRect(4, 36, 4, 12);
+  ctx.fillRect(4, 36, 4, 8);
   // Add front details to overlay
   if (scheme.legs.pockets) {
     ctx.fillStyle = scheme.legs.pockets;
     ctx.fillRect(5, 38, 2, 3);
   }
 
-  // Left side (8,36 to 12,48)
+  // Left side (8,36 to 12,44) - Only 8 pixels, not 12
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
-  ctx.fillRect(8, 36, 4, 12);
+  ctx.fillRect(8, 36, 4, 8);
   // Add side details to overlay
   if (scheme.legs.secondary) {
     ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.9);
-    ctx.fillRect(9, 36, 2, 12);
+    ctx.fillRect(9, 36, 2, 8);
   }
 
-  // Back (12,36 to 16,48)
+  // Back (12,36 to 16,44) - Only 8 pixels, not 12
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
-  ctx.fillRect(12, 36, 4, 12);
+  ctx.fillRect(12, 36, 4, 8);
   // Add back details to overlay
   if (scheme.legs.secondary) {
     ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.85);
-    ctx.fillRect(13, 36, 2, 12);
+    ctx.fillRect(13, 36, 2, 8);
   }
   if (scheme.legs.pockets) {
     ctx.fillStyle = darkenColor(scheme.legs.pockets, 0.85);
@@ -1072,6 +1073,7 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   }
 
   // Left Leg Second Layer (Pants overlay)
+  // IMPORTANT: Only cover top 8 pixels, leave bottom 4 pixels (shoes) visible
   // Top (4,48 to 8,52)
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.95);
   ctx.fillRect(4, 48, 4, 4);
@@ -1080,40 +1082,40 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
   ctx.fillRect(8, 48, 4, 4);
 
-  // Right side (0,52 to 4,64)
+  // Right side (0,52 to 4,60) - Only 8 pixels, not 12
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
-  ctx.fillRect(0, 52, 4, 12);
+  ctx.fillRect(0, 52, 4, 8);
   // Add side details to overlay
   if (scheme.legs.secondary) {
     ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.9);
-    ctx.fillRect(1, 52, 2, 12);
+    ctx.fillRect(1, 52, 2, 8);
   }
 
-  // Front (4,52 to 8,64)
+  // Front (4,52 to 8,60) - Only 8 pixels, not 12
   ctx.fillStyle = scheme.legs.primary;
-  ctx.fillRect(4, 52, 4, 12);
+  ctx.fillRect(4, 52, 4, 8);
   // Add front details to overlay
   if (scheme.legs.pockets) {
     ctx.fillStyle = scheme.legs.pockets;
     ctx.fillRect(5, 54, 2, 3);
   }
 
-  // Left side (8,52 to 12,64)
+  // Left side (8,52 to 12,60) - Only 8 pixels, not 12
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
-  ctx.fillRect(8, 52, 4, 12);
+  ctx.fillRect(8, 52, 4, 8);
   // Add side details to overlay
   if (scheme.legs.secondary) {
     ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.9);
-    ctx.fillRect(9, 52, 2, 12);
+    ctx.fillRect(9, 52, 2, 8);
   }
 
-  // Back (12,52 to 16,64)
+  // Back (12,52 to 16,60) - Only 8 pixels, not 12
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
-  ctx.fillRect(12, 52, 4, 12);
+  ctx.fillRect(12, 52, 4, 8);
   // Add back details to overlay
   if (scheme.legs.secondary) {
     ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.85);
-    ctx.fillRect(13, 52, 2, 12);
+    ctx.fillRect(13, 52, 2, 8);
   }
   if (scheme.legs.pockets) {
     ctx.fillStyle = darkenColor(scheme.legs.pockets, 0.85);
