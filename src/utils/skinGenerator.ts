@@ -535,7 +535,10 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
 
   // Hand (skin color at bottom of arm)
   ctx.fillStyle = scheme.arms.skin;
-  ctx.fillRect(44, 28, 4, 4);
+  ctx.fillRect(44, 28, 4, 4); // Front
+  ctx.fillRect(40, 28, 4, 4); // Right side
+  ctx.fillRect(48, 28, 4, 4); // Left side
+  ctx.fillRect(52, 28, 4, 4); // Back
 
   // Watch/bracelet on wrist
   if (scheme.arms.watch) {
@@ -584,7 +587,10 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
 
   // Hand
   ctx.fillStyle = scheme.arms.skin;
-  ctx.fillRect(36, 60, 4, 4);
+  ctx.fillRect(36, 60, 4, 4); // Front
+  ctx.fillRect(32, 60, 4, 4); // Right side
+  ctx.fillRect(40, 60, 4, 4); // Left side
+  ctx.fillRect(44, 60, 4, 4); // Back
 
   // Watch on left hand too (if applicable)
   if (scheme.arms.watch) {
@@ -639,7 +645,10 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   // Shoe on right leg
   if (scheme.legs.shoes) {
     ctx.fillStyle = scheme.legs.shoes;
-    ctx.fillRect(4, 28, 4, 4);
+    ctx.fillRect(4, 28, 4, 4);   // Front
+    ctx.fillRect(0, 28, 4, 4);   // Right side
+    ctx.fillRect(8, 28, 4, 4);   // Left side
+    ctx.fillRect(12, 28, 4, 4);  // Back
 
     // Shoe laces
     if (scheme.legs.shoeLaces) {
@@ -702,7 +711,10 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   // Shoe on left leg
   if (scheme.legs.shoes) {
     ctx.fillStyle = scheme.legs.shoes;
-    ctx.fillRect(20, 60, 4, 4);
+    ctx.fillRect(20, 60, 4, 4);  // Front
+    ctx.fillRect(16, 60, 4, 4);  // Right side
+    ctx.fillRect(24, 60, 4, 4);  // Left side
+    ctx.fillRect(28, 60, 4, 4);  // Back
 
     // Shoe laces
     if (scheme.legs.shoeLaces) {
