@@ -236,31 +236,35 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   ctx.fillRect(48, 0, 8, 8);
 
   // Hat layer - Right (32,8 to 40,16)
+  // Only draw hair on top part, leave face visible
   ctx.fillStyle = darkenColor(scheme.head.hair, 0.9);
-  ctx.fillRect(32, 8, 8, 8);
+  ctx.fillRect(32, 8, 8, 4);
 
   // Hat layer - Front (40,8 to 48,16)
+  // Only draw hair on top part, leave face area (eyes/mouth) transparent
   ctx.fillStyle = scheme.head.hair;
-  ctx.fillRect(40, 8, 8, 8);
+  ctx.fillRect(40, 8, 8, 4); // Only top half (hair), not covering face
 
   // Hair details
   if (scheme.head.hairHighlight) {
     ctx.fillStyle = scheme.head.hairHighlight;
-    // Add some highlight pixels
+    // Add some highlight pixels on hair area only
     for (let i = 0; i < 5; i++) {
       const x = 40 + Math.floor(Math.random() * 8);
-      const y = Math.floor(Math.random() * 4);
+      const y = 8 + Math.floor(Math.random() * 4); // Keep in hair area
       ctx.fillRect(x, y, 1, 1);
     }
   }
 
   // Hat layer - Left (48,8 to 56,16)
+  // Only draw hair on top part
   ctx.fillStyle = darkenColor(scheme.head.hair, 0.9);
-  ctx.fillRect(48, 8, 8, 8);
+  ctx.fillRect(48, 8, 8, 4);
 
   // Hat layer - Back (56,8 to 64,16)
+  // Only draw hair on top part
   ctx.fillStyle = darkenColor(scheme.head.hair, 0.85);
-  ctx.fillRect(56, 8, 8, 8);
+  ctx.fillRect(56, 8, 8, 4);
 
   // Hat accessory
   if (scheme.accessories?.hat) {
@@ -645,20 +649,24 @@ function drawSkinTemplate(
   ctx.fillRect(48, 0, 8, 8);
 
   // Hat layer - Right (32,8 to 40,16)
+  // Only draw hair on top part, leave face visible
   ctx.fillStyle = darkenColor(colors.secondary, 0.9);
-  ctx.fillRect(32, 8, 8, 8);
+  ctx.fillRect(32, 8, 8, 4);
 
   // Hat layer - Front (40,8 to 48,16)
+  // Only draw hair on top part, leave face area (eyes/mouth) transparent
   ctx.fillStyle = colors.secondary;
-  ctx.fillRect(40, 8, 8, 8);
+  ctx.fillRect(40, 8, 8, 4); // Only top half (hair), not covering face
 
   // Hat layer - Left (48,8 to 56,16)
+  // Only draw hair on top part
   ctx.fillStyle = darkenColor(colors.secondary, 0.9);
-  ctx.fillRect(48, 8, 8, 8);
+  ctx.fillRect(48, 8, 8, 4);
 
   // Hat layer - Back (56,8 to 64,16)
+  // Only draw hair on top part
   ctx.fillStyle = darkenColor(colors.secondary, 0.85);
-  ctx.fillRect(56, 8, 8, 8);
+  ctx.fillRect(56, 8, 8, 4);
 
   // Hat accessory
   if (style.hasHat) {
