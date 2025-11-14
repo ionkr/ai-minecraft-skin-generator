@@ -96,14 +96,16 @@ async function generateColorSchemeWithAI(
 
   const systemPrompt = `You are an expert Minecraft skin designer with deep knowledge of pixel art and character design. Generate HIGHLY DETAILED color schemes for Minecraft skins based on user descriptions.
 
-IMPORTANT: Minecraft skins use a 64x64 pixel layout with specific UV mapping:
-- Head: 8x8x8 pixels (front face at 8,8 to 16,16)
-- Body/Torso: 8x12 pixels (front at 20,20 to 28,32)
-- Arms: 4x12 pixels each
-- Legs: 4x12 pixels each
-- Second layer (overlays) for hat, clothing details
+CRITICAL: Minecraft skins are 3D and viewed from ALL ANGLES (front, back, left, right, top, bottom). Every surface must have EQUAL detail and visual interest. The back and sides are just as important as the front!
 
-CREATE RICH, DETAILED DESIGNS with multiple colors and layers. Your response MUST be valid JSON following this exact structure:
+IMPORTANT: Minecraft skins use a 64x64 pixel layout with specific UV mapping:
+- Head: 8x8x8 pixels with 6 faces (front, back, left, right, top, bottom)
+- Body/Torso: 8x12 pixels with 6 faces (front, back, left, right, top, bottom)
+- Arms: 4x12 pixels each with 6 faces per arm
+- Legs: 4x12 pixels each with 6 faces per leg
+- Second layer (overlays) for hat, jacket, sleeves, pants - ALL surfaces need detail!
+
+CREATE RICH, DETAILED DESIGNS with multiple colors and layers for EVERY SURFACE. Your response MUST be valid JSON following this exact structure:
 {
   "head": {
     "skin": "#hexcolor",
@@ -160,23 +162,38 @@ CREATE RICH, DETAILED DESIGNS with multiple colors and layers. Your response MUS
 }
 
 CRITICAL DESIGN GUIDELINES:
-1. USE CONTRASTING COLORS - Ensure different clothing elements have distinct colors for visual interest
-2. ADD DEPTH - Always provide highlight and shadow colors for 3D effect
-3. INCLUDE DETAILS - Add small accent colors for buttons, trim, pockets, seams, etc.
-4. BE SPECIFIC - If the prompt mentions a character or style, match their iconic colors accurately
-5. CREATE TEXTURE - Use multiple shades of the same color family for richness
-6. FACIAL FEATURES - Always define eyebrows, nose shading, and blush for more expressive faces
-7. CLOTHING COMPLEXITY - Add patterns, logos, stripes, or textures to clothing
-8. ACCESSORIES - Include watches, jewelry, or other small details when appropriate
-9. REALISTIC SHADING - Use darker variants for shadows (multiply base color by 0.7-0.8)
+1. **ALL SURFACES MATTER** - Design details for EVERY angle: front, back, sides, top, bottom. The back of the head should have hair texture, the back of the body should have clothing details (logos, patterns, hoods), sides need seams and panels
+2. USE CONTRASTING COLORS - Ensure different clothing elements have distinct colors for visual interest on ALL surfaces
+3. ADD DEPTH - Always provide highlight and shadow colors for 3D effect on EVERY face
+4. INCLUDE DETAILS - Add small accent colors for buttons, trim, pockets, seams, etc. on front AND back
+5. BE SPECIFIC - If the prompt mentions a character or style, match their iconic colors accurately on all surfaces
+6. CREATE TEXTURE - Use multiple shades of the same color family for richness across all areas
+7. FACIAL FEATURES - Always define eyebrows, nose shading, and blush for more expressive faces
+8. CLOTHING COMPLEXITY - Add patterns, logos, stripes, or textures to clothing on FRONT, BACK, and SIDES
+9. REALISTIC SHADING - Use darker variants for shadows (multiply base color by 0.7-0.8) on all faces
 10. HIGHLIGHTS - Use lighter variants for highlights (multiply base color by 1.2-1.4, cap at 255)
+11. **BACK DETAILS** - The back of clothing should have: collar continuation, back pockets, logos, hood details, jacket seams, belt loops
+12. **SIDE DETAILS** - Sides should have: sleeve seams, pants seams, color panels, racing stripes
+13. **HAIR FROM ALL ANGLES** - Hair should have highlights/shadows on top, sides, and back - not just front
 
-EXAMPLES OF GOOD DETAIL:
-- A "ninja" should have multiple shades of black/gray for outfit depth, bright accent for belt/headband, skin tone variations
-- A "firefighter" should have yellow/orange gear with reflective strips, helmet with visor, boots with thick soles
-- A "casual teenager" should have denim blue jeans with seam details, colorful hoodie with drawstrings, sneakers with laces
+EXAMPLES OF GOOD DETAIL (ALL ANGLES):
+- A "ninja" should have:
+  * Front: Face mask, weapon belt with buckle
+  * Back: Sword/shuriken holder, back belt straps
+  * Sides: Armor plates, side belt details
+  * Hair: Black with subtle blue highlights on all sides
+- A "firefighter" should have:
+  * Front: Yellow reflective stripes, badge, buttons
+  * Back: "FIRE DEPT" text or logo, reflective X pattern
+  * Sides: Side pockets, reflective vertical stripes
+  * Helmet: Yellow/red on all sides with visor detail
+- A "casual teenager" should have:
+  * Front: Hoodie with logo, drawstrings, front pocket
+  * Back: Hoodie with back graphic/text, hood detail
+  * Sides: Hoodie side panels in contrasting color, sleeve cuffs
+  * Jeans: Front pockets, back pockets, side seams with contrasting thread
 
-Be MAXIMALLY creative and detailed! Fill in ALL optional fields when they enhance the design.`;
+Be MAXIMALLY creative and detailed! Fill in ALL optional fields when they enhance the design. Remember: players will see your skin from EVERY angle!`;
 
   const response = await client.messages.create({
     model: 'claude-haiku-4-5-20251001',
@@ -258,6 +275,13 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   // Head - Back (24,8 to 32,16)
   ctx.fillStyle = darkenColor(scheme.head.skin, 0.85);
   ctx.fillRect(24, 8, 8, 8);
+
+  // Add hair/skin shading to back of head
+  if (scheme.head.nose) {
+    // Add subtle skin shading to back of head
+    ctx.fillStyle = darkenColor(scheme.head.skin, 0.8);
+    ctx.fillRect(25, 12, 6, 3);
+  }
 
   // Eyebrows
   if (scheme.head.eyebrows) {
@@ -375,6 +399,29 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   ctx.fillStyle = darkenColor(scheme.head.hair, 0.85);
   ctx.fillRect(56, 8, 8, 4);
 
+  // Add hair texture to back of head (important!)
+  if (scheme.head.hairHighlight) {
+    ctx.fillStyle = lightenColor(darkenColor(scheme.head.hair, 0.85), 1.15);
+    // Back hair highlights
+    for (let i = 0; i < 8; i++) {
+      const x = 56 + Math.floor(Math.random() * 8);
+      const y = 8 + Math.floor(Math.random() * 4);
+      ctx.fillRect(x, y, 1, 1);
+    }
+  }
+
+  if (scheme.head.hairShadow) {
+    ctx.fillStyle = darkenColor(scheme.head.hairShadow, 0.85);
+    // Back hair shadows
+    for (let i = 0; i < 6; i++) {
+      const x = 56 + Math.floor(Math.random() * 8);
+      const y = 10 + Math.floor(Math.random() * 2);
+      ctx.fillRect(x, y, 1, 1);
+    }
+    // Add full back lower hair layer
+    ctx.fillRect(56, 12, 8, 4);
+  }
+
   // Hat accessory
   if (scheme.accessories?.hat) {
     ctx.fillStyle = scheme.accessories.hat.color;
@@ -407,6 +454,20 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   ctx.fillStyle = darkenColor(scheme.body.primary, 0.9);
   ctx.fillRect(16, 20, 4, 12);
 
+  // Add details to right side
+  if (scheme.body.secondary) {
+    ctx.fillStyle = darkenColor(scheme.body.secondary, 0.9);
+    // Side panel stripe
+    ctx.fillRect(17, 20, 2, 12);
+  }
+  if (scheme.body.accent) {
+    ctx.fillStyle = darkenColor(scheme.body.accent, 0.9);
+    // Side seam
+    ctx.fillRect(16, 20, 1, 12);
+    // Side details
+    ctx.fillRect(18, 25, 1, 3);
+  }
+
   // Body - Front (20,20 to 28,32)
   ctx.fillStyle = scheme.body.primary;
   ctx.fillRect(20, 20, 8, 12);
@@ -415,9 +476,59 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   ctx.fillStyle = darkenColor(scheme.body.primary, 0.9);
   ctx.fillRect(28, 20, 4, 12);
 
+  // Add details to left side
+  if (scheme.body.secondary) {
+    ctx.fillStyle = darkenColor(scheme.body.secondary, 0.9);
+    // Side panel stripe
+    ctx.fillRect(29, 20, 2, 12);
+  }
+  if (scheme.body.accent) {
+    ctx.fillStyle = darkenColor(scheme.body.accent, 0.9);
+    // Side seam
+    ctx.fillRect(31, 20, 1, 12);
+    // Side details
+    ctx.fillRect(29, 25, 1, 3);
+  }
+
   // Body - Back (32,20 to 40,32)
   ctx.fillStyle = darkenColor(scheme.body.primary, 0.85);
   ctx.fillRect(32, 20, 8, 12);
+
+  // Add details to body back (important for 3D view!)
+  // Pattern on back (if exists)
+  if (scheme.body.pattern) {
+    ctx.fillStyle = darkenColor(scheme.body.pattern, 0.85);
+    // Horizontal stripes on back
+    ctx.fillRect(32, 22, 8, 1);
+    ctx.fillRect(32, 24, 8, 1);
+    ctx.fillRect(32, 26, 8, 1);
+    // Or back logo/design
+    ctx.fillRect(34, 21, 4, 4);
+  }
+
+  // Secondary color on back sides
+  if (scheme.body.secondary) {
+    ctx.fillStyle = darkenColor(scheme.body.secondary, 0.85);
+    ctx.fillRect(32, 20, 2, 12); // Left back panel
+    ctx.fillRect(38, 20, 2, 12); // Right back panel
+  }
+
+  // Accent details on back (center seam, back pockets)
+  if (scheme.body.accent) {
+    ctx.fillStyle = darkenColor(scheme.body.accent, 0.85);
+    // Center back seam
+    ctx.fillRect(35, 20, 1, 12);
+    ctx.fillRect(36, 20, 1, 12);
+    // Back pocket outlines
+    ctx.fillRect(33, 25, 2, 3);
+    ctx.fillRect(37, 25, 2, 3);
+  }
+
+  // Belt on back
+  if (scheme.body.belt) {
+    ctx.fillStyle = darkenColor(scheme.body.belt, 0.85);
+    ctx.fillRect(32, 30, 8, 2);
+  }
 
   // Collar detail
   if (scheme.body.collar) {
@@ -518,6 +629,14 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.85);
   ctx.fillRect(52, 20, 4, 12);
 
+  // Add details to arm back
+  if (scheme.arms.detail) {
+    ctx.fillStyle = darkenColor(scheme.arms.detail, 0.85);
+    // Back sleeve details
+    ctx.fillRect(52, 20, 4, 2);
+    ctx.fillRect(53, 25, 2, 1);
+  }
+
   // Arm details
   if (scheme.arms.detail) {
     ctx.fillStyle = scheme.arms.detail;
@@ -571,6 +690,14 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.85);
   ctx.fillRect(44, 52, 4, 12);
 
+  // Add details to left arm back
+  if (scheme.arms.detail) {
+    ctx.fillStyle = darkenColor(scheme.arms.detail, 0.85);
+    // Back sleeve details
+    ctx.fillRect(44, 52, 4, 2);
+    ctx.fillRect(45, 57, 2, 1);
+  }
+
   // Left arm details
   if (scheme.arms.detail) {
     ctx.fillStyle = scheme.arms.detail;
@@ -612,6 +739,13 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
   ctx.fillRect(0, 20, 4, 12);
 
+  // Add details to right leg right side
+  if (scheme.legs.secondary) {
+    ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.9);
+    // Side stripe
+    ctx.fillRect(1, 20, 2, 12);
+  }
+
   // Right Leg - Front (4,20 to 8,32)
   ctx.fillStyle = scheme.legs.primary;
   ctx.fillRect(4, 20, 4, 12);
@@ -620,9 +754,28 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
   ctx.fillRect(8, 20, 4, 12);
 
+  // Add details to right leg left side
+  if (scheme.legs.secondary) {
+    ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.9);
+    // Side stripe
+    ctx.fillRect(9, 20, 2, 12);
+  }
+
   // Right Leg - Back (12,20 to 16,32)
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
   ctx.fillRect(12, 20, 4, 12);
+
+  // Add details to right leg back
+  if (scheme.legs.secondary) {
+    ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.85);
+    // Back seam/panel
+    ctx.fillRect(13, 20, 2, 12);
+  }
+  if (scheme.legs.pockets) {
+    ctx.fillStyle = darkenColor(scheme.legs.pockets, 0.85);
+    // Back pocket
+    ctx.fillRect(13, 22, 2, 3);
+  }
 
   // Leg pockets
   if (scheme.legs.pockets) {
@@ -678,6 +831,13 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
   ctx.fillRect(16, 52, 4, 12);
 
+  // Add details to left leg right side
+  if (scheme.legs.secondary) {
+    ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.9);
+    // Side stripe
+    ctx.fillRect(17, 52, 2, 12);
+  }
+
   // Left Leg - Front (20,52 to 24,64)
   ctx.fillStyle = scheme.legs.primary;
   ctx.fillRect(20, 52, 4, 12);
@@ -686,9 +846,28 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
   ctx.fillRect(24, 52, 4, 12);
 
+  // Add details to left leg left side
+  if (scheme.legs.secondary) {
+    ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.9);
+    // Side stripe
+    ctx.fillRect(25, 52, 2, 12);
+  }
+
   // Left Leg - Back (28,52 to 32,64)
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
   ctx.fillRect(28, 52, 4, 12);
+
+  // Add details to left leg back
+  if (scheme.legs.secondary) {
+    ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.85);
+    // Back seam/panel
+    ctx.fillRect(29, 52, 2, 12);
+  }
+  if (scheme.legs.pockets) {
+    ctx.fillStyle = darkenColor(scheme.legs.pockets, 0.85);
+    // Back pocket
+    ctx.fillRect(29, 54, 2, 3);
+  }
 
   // Left leg pockets
   if (scheme.legs.pockets) {
@@ -747,18 +926,40 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   // Right side (40,36 to 44,48)
   ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.9);
   ctx.fillRect(40, 36, 4, 12);
+  // Add side details to overlay
+  if (scheme.arms.detail) {
+    ctx.fillStyle = darkenColor(scheme.arms.detail, 0.9);
+    ctx.fillRect(40, 36, 4, 2);
+  }
 
   // Front (44,36 to 48,48)
   ctx.fillStyle = scheme.arms.clothing;
   ctx.fillRect(44, 36, 4, 12);
+  // Add front details to overlay
+  if (scheme.arms.detail) {
+    ctx.fillStyle = scheme.arms.detail;
+    ctx.fillRect(44, 36, 4, 2);
+    ctx.fillRect(45, 40, 2, 1);
+  }
 
   // Left side (48,36 to 52,48)
   ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.9);
   ctx.fillRect(48, 36, 4, 12);
+  // Add side details to overlay
+  if (scheme.arms.detail) {
+    ctx.fillStyle = darkenColor(scheme.arms.detail, 0.9);
+    ctx.fillRect(48, 36, 4, 2);
+  }
 
   // Back (52,36 to 56,48)
   ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.85);
   ctx.fillRect(52, 36, 4, 12);
+  // Add back details to overlay
+  if (scheme.arms.detail) {
+    ctx.fillStyle = darkenColor(scheme.arms.detail, 0.85);
+    ctx.fillRect(52, 36, 4, 2);
+    ctx.fillRect(53, 40, 2, 1);
+  }
 
   // Left Arm Second Layer (Sleeve overlay)
   // Top (52,48 to 56,52)
@@ -772,18 +973,40 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   // Right side (48,52 to 52,64)
   ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.9);
   ctx.fillRect(48, 52, 4, 12);
+  // Add side details to overlay
+  if (scheme.arms.detail) {
+    ctx.fillStyle = darkenColor(scheme.arms.detail, 0.9);
+    ctx.fillRect(48, 52, 4, 2);
+  }
 
   // Front (52,52 to 56,64)
   ctx.fillStyle = scheme.arms.clothing;
   ctx.fillRect(52, 52, 4, 12);
+  // Add front details to overlay
+  if (scheme.arms.detail) {
+    ctx.fillStyle = scheme.arms.detail;
+    ctx.fillRect(52, 52, 4, 2);
+    ctx.fillRect(53, 56, 2, 1);
+  }
 
   // Left side (56,52 to 60,64)
   ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.9);
   ctx.fillRect(56, 52, 4, 12);
+  // Add side details to overlay
+  if (scheme.arms.detail) {
+    ctx.fillStyle = darkenColor(scheme.arms.detail, 0.9);
+    ctx.fillRect(56, 52, 4, 2);
+  }
 
   // Back (60,52 to 64,64)
   ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.85);
   ctx.fillRect(60, 52, 4, 12);
+  // Add back details to overlay
+  if (scheme.arms.detail) {
+    ctx.fillStyle = darkenColor(scheme.arms.detail, 0.85);
+    ctx.fillRect(60, 52, 4, 2);
+    ctx.fillRect(61, 56, 2, 1);
+  }
 
   // Right Leg Second Layer (Pants overlay)
   // Top (4,32 to 8,36)
@@ -797,18 +1020,42 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   // Right side (0,36 to 4,48)
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
   ctx.fillRect(0, 36, 4, 12);
+  // Add side details to overlay
+  if (scheme.legs.secondary) {
+    ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.9);
+    ctx.fillRect(1, 36, 2, 12);
+  }
 
   // Front (4,36 to 8,48)
   ctx.fillStyle = scheme.legs.primary;
   ctx.fillRect(4, 36, 4, 12);
+  // Add front details to overlay
+  if (scheme.legs.pockets) {
+    ctx.fillStyle = scheme.legs.pockets;
+    ctx.fillRect(5, 38, 2, 3);
+  }
 
   // Left side (8,36 to 12,48)
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
   ctx.fillRect(8, 36, 4, 12);
+  // Add side details to overlay
+  if (scheme.legs.secondary) {
+    ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.9);
+    ctx.fillRect(9, 36, 2, 12);
+  }
 
   // Back (12,36 to 16,48)
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
   ctx.fillRect(12, 36, 4, 12);
+  // Add back details to overlay
+  if (scheme.legs.secondary) {
+    ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.85);
+    ctx.fillRect(13, 36, 2, 12);
+  }
+  if (scheme.legs.pockets) {
+    ctx.fillStyle = darkenColor(scheme.legs.pockets, 0.85);
+    ctx.fillRect(13, 38, 2, 3);
+  }
 
   // Left Leg Second Layer (Pants overlay)
   // Top (4,48 to 8,52)
@@ -822,18 +1069,42 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
   // Right side (0,52 to 4,64)
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
   ctx.fillRect(0, 52, 4, 12);
+  // Add side details to overlay
+  if (scheme.legs.secondary) {
+    ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.9);
+    ctx.fillRect(1, 52, 2, 12);
+  }
 
   // Front (4,52 to 8,64)
   ctx.fillStyle = scheme.legs.primary;
   ctx.fillRect(4, 52, 4, 12);
+  // Add front details to overlay
+  if (scheme.legs.pockets) {
+    ctx.fillStyle = scheme.legs.pockets;
+    ctx.fillRect(5, 54, 2, 3);
+  }
 
   // Left side (8,52 to 12,64)
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
   ctx.fillRect(8, 52, 4, 12);
+  // Add side details to overlay
+  if (scheme.legs.secondary) {
+    ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.9);
+    ctx.fillRect(9, 52, 2, 12);
+  }
 
   // Back (12,52 to 16,64)
   ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
   ctx.fillRect(12, 52, 4, 12);
+  // Add back details to overlay
+  if (scheme.legs.secondary) {
+    ctx.fillStyle = darkenColor(scheme.legs.secondary, 0.85);
+    ctx.fillRect(13, 52, 2, 12);
+  }
+  if (scheme.legs.pockets) {
+    ctx.fillStyle = darkenColor(scheme.legs.pockets, 0.85);
+    ctx.fillRect(13, 54, 2, 3);
+  }
 
   // Add texture and details
   addPixelArtDetails(ctx, scheme);
@@ -841,14 +1112,44 @@ function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme
 
 /**
  * Add pixel art details and texture to make the skin more interesting
+ * This function adds final touches to ALL surfaces (front, back, sides)
  */
 function addPixelArtDetails(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme): void {
-  // Add subtle texture to clothing
+  // Add subtle texture to clothing FRONT
   if (scheme.body.accent) {
     ctx.fillStyle = scheme.body.accent;
-    // Random detail pixels for texture
+    // Random detail pixels for texture on front
     for (let i = 0; i < 20; i++) {
       const x = 20 + Math.floor(Math.random() * 8);
+      const y = 21 + Math.floor(Math.random() * 10);
+      if (Math.random() > 0.6) {
+        ctx.fillRect(x, y, 1, 1);
+      }
+    }
+
+    // Add texture to BACK as well
+    const darkenedAccent = darkenColor(scheme.body.accent, 0.85);
+    ctx.fillStyle = darkenedAccent;
+    for (let i = 0; i < 15; i++) {
+      const x = 32 + Math.floor(Math.random() * 8);
+      const y = 21 + Math.floor(Math.random() * 10);
+      if (Math.random() > 0.6) {
+        ctx.fillRect(x, y, 1, 1);
+      }
+    }
+
+    // Add texture to SIDES
+    const sideDarkenedAccent = darkenColor(scheme.body.accent, 0.9);
+    ctx.fillStyle = sideDarkenedAccent;
+    for (let i = 0; i < 10; i++) {
+      const x = 16 + Math.floor(Math.random() * 4);
+      const y = 21 + Math.floor(Math.random() * 10);
+      if (Math.random() > 0.6) {
+        ctx.fillRect(x, y, 1, 1);
+      }
+    }
+    for (let i = 0; i < 10; i++) {
+      const x = 28 + Math.floor(Math.random() * 4);
       const y = 21 + Math.floor(Math.random() * 10);
       if (Math.random() > 0.6) {
         ctx.fillRect(x, y, 1, 1);
@@ -901,15 +1202,44 @@ function addPixelArtDetails(ctx: CanvasRenderingContext2D, scheme: SkinColorSche
     }
   }
 
-  // Add hair texture
+  // Add hair texture to ALL sides of head
   if (scheme.head.hairHighlight) {
     ctx.fillStyle = scheme.head.hairHighlight;
-    // More natural hair strands
+    // More natural hair strands on FRONT
     for (let i = 0; i < 12; i++) {
       const x = 40 + Math.floor(Math.random() * 8);
       const y = Math.floor(Math.random() * 8);
       if (Math.random() > 0.4) {
         ctx.fillRect(x, y, 1, 2); // Vertical strand
+      }
+    }
+
+    // Hair strands on LEFT SIDE
+    ctx.fillStyle = darkenColor(scheme.head.hairHighlight, 0.9);
+    for (let i = 0; i < 8; i++) {
+      const x = 48 + Math.floor(Math.random() * 8);
+      const y = Math.floor(Math.random() * 6);
+      if (Math.random() > 0.5) {
+        ctx.fillRect(x, y, 1, 2);
+      }
+    }
+
+    // Hair strands on RIGHT SIDE
+    for (let i = 0; i < 8; i++) {
+      const x = 32 + Math.floor(Math.random() * 8);
+      const y = Math.floor(Math.random() * 6);
+      if (Math.random() > 0.5) {
+        ctx.fillRect(x, y, 1, 2);
+      }
+    }
+
+    // Hair strands on BACK
+    ctx.fillStyle = darkenColor(scheme.head.hairHighlight, 0.85);
+    for (let i = 0; i < 10; i++) {
+      const x = 56 + Math.floor(Math.random() * 8);
+      const y = Math.floor(Math.random() * 6);
+      if (Math.random() > 0.4) {
+        ctx.fillRect(x, y, 1, 2);
       }
     }
   }
