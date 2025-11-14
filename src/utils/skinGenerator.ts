@@ -179,7 +179,7 @@ EXAMPLES OF GOOD DETAIL:
 Be MAXIMALLY creative and detailed! Fill in ALL optional fields when they enhance the design.`;
 
   const response = await client.messages.create({
-    model: 'claude-haiku-4-5-20250929',
+    model: 'claude-haiku-4-5-20251001',
     max_tokens: 2048,
     temperature: 1.0,
     system: systemPrompt,
@@ -1165,19 +1165,119 @@ function drawSkinTemplate(
     ctx.fillRect(23, 22, 2, 6);
   }
 
-  // Right arm
+  // ===== RIGHT ARM (4x12 pixels) =====
+  // Top (44,16 to 48,20)
+  ctx.fillStyle = darkenColor(colors.primary, 0.95);
+  ctx.fillRect(44, 16, 4, 4);
+
+  // Bottom (48,16 to 52,20)
+  ctx.fillStyle = darkenColor(colors.primary, 0.85);
+  ctx.fillRect(48, 16, 4, 4);
+
+  // Right side (40,20 to 44,32)
+  ctx.fillStyle = darkenColor(colors.primary, 0.9);
+  ctx.fillRect(40, 20, 4, 12);
+
+  // Front (44,20 to 48,32)
   ctx.fillStyle = colors.primary;
-  ctx.fillRect(44, 20, 4, 12); // Front
+  ctx.fillRect(44, 20, 4, 12);
 
-  // Left arm
-  ctx.fillRect(36, 52, 4, 12); // Front
+  // Left side (48,20 to 52,32)
+  ctx.fillStyle = darkenColor(colors.primary, 0.9);
+  ctx.fillRect(48, 20, 4, 12);
 
-  // Right leg
+  // Back (52,20 to 56,32)
+  ctx.fillStyle = darkenColor(colors.primary, 0.85);
+  ctx.fillRect(52, 20, 4, 12);
+
+  // Hand (skin color)
+  ctx.fillStyle = colors.skin;
+  ctx.fillRect(44, 28, 4, 4); // Front
+  ctx.fillRect(40, 28, 4, 4); // Right side
+  ctx.fillRect(48, 28, 4, 4); // Left side
+  ctx.fillRect(52, 28, 4, 4); // Back
+
+  // ===== LEFT ARM (4x12 pixels) =====
+  // Top (36,48 to 40,52)
+  ctx.fillStyle = darkenColor(colors.primary, 0.95);
+  ctx.fillRect(36, 48, 4, 4);
+
+  // Bottom (40,48 to 44,52)
+  ctx.fillStyle = darkenColor(colors.primary, 0.85);
+  ctx.fillRect(40, 48, 4, 4);
+
+  // Right side (32,52 to 36,64)
+  ctx.fillStyle = darkenColor(colors.primary, 0.9);
+  ctx.fillRect(32, 52, 4, 12);
+
+  // Front (36,52 to 40,64)
+  ctx.fillStyle = colors.primary;
+  ctx.fillRect(36, 52, 4, 12);
+
+  // Left side (40,52 to 44,64)
+  ctx.fillStyle = darkenColor(colors.primary, 0.9);
+  ctx.fillRect(40, 52, 4, 12);
+
+  // Back (44,52 to 48,64)
+  ctx.fillStyle = darkenColor(colors.primary, 0.85);
+  ctx.fillRect(44, 52, 4, 12);
+
+  // Hand (skin color)
+  ctx.fillStyle = colors.skin;
+  ctx.fillRect(36, 60, 4, 4); // Front
+  ctx.fillRect(32, 60, 4, 4); // Right side
+  ctx.fillRect(40, 60, 4, 4); // Left side
+  ctx.fillRect(44, 60, 4, 4); // Back
+
+  // ===== RIGHT LEG (4x12 pixels) =====
+  // Top (4,16 to 8,20)
+  ctx.fillStyle = darkenColor(colors.secondary, 0.95);
+  ctx.fillRect(4, 16, 4, 4);
+
+  // Bottom (8,16 to 12,20)
+  ctx.fillStyle = darkenColor(colors.secondary, 0.85);
+  ctx.fillRect(8, 16, 4, 4);
+
+  // Right side (0,20 to 4,32)
+  ctx.fillStyle = darkenColor(colors.secondary, 0.9);
+  ctx.fillRect(0, 20, 4, 12);
+
+  // Front (4,20 to 8,32)
   ctx.fillStyle = colors.secondary;
   ctx.fillRect(4, 20, 4, 12);
 
-  // Left leg
+  // Left side (8,20 to 12,32)
+  ctx.fillStyle = darkenColor(colors.secondary, 0.9);
+  ctx.fillRect(8, 20, 4, 12);
+
+  // Back (12,20 to 16,32)
+  ctx.fillStyle = darkenColor(colors.secondary, 0.85);
+  ctx.fillRect(12, 20, 4, 12);
+
+  // ===== LEFT LEG (4x12 pixels) =====
+  // Top (20,48 to 24,52)
+  ctx.fillStyle = darkenColor(colors.secondary, 0.95);
+  ctx.fillRect(20, 48, 4, 4);
+
+  // Bottom (24,48 to 28,52)
+  ctx.fillStyle = darkenColor(colors.secondary, 0.85);
+  ctx.fillRect(24, 48, 4, 4);
+
+  // Right side (16,52 to 20,64)
+  ctx.fillStyle = darkenColor(colors.secondary, 0.9);
+  ctx.fillRect(16, 52, 4, 12);
+
+  // Front (20,52 to 24,64)
+  ctx.fillStyle = colors.secondary;
   ctx.fillRect(20, 52, 4, 12);
+
+  // Left side (24,52 to 28,64)
+  ctx.fillStyle = darkenColor(colors.secondary, 0.9);
+  ctx.fillRect(24, 52, 4, 12);
+
+  // Back (28,52 to 32,64)
+  ctx.fillStyle = darkenColor(colors.secondary, 0.85);
+  ctx.fillRect(28, 52, 4, 12);
 
   // Add shading and details
   addSkinDetails(ctx, colors);
