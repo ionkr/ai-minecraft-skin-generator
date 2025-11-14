@@ -1,12 +1,48 @@
 /**
  * AI-powered Minecraft skin generator
- * This module handles generating Minecraft skins from text prompts
+ * This module handles generating Minecraft skins from text prompts using Anthropic's Claude API
  */
+
+import Anthropic from '@anthropic-ai/sdk';
 
 interface SkinGenerationOptions {
   prompt: string;
   apiKey?: string;
   useDemo?: boolean;
+}
+
+interface SkinColorScheme {
+  head: {
+    skin: string;
+    hair: string;
+    hairHighlight?: string;
+    eyes: string;
+    eyeDetail?: string;
+    mouth?: string;
+    accessories?: Array<{ color: string; area: string }>;
+  };
+  body: {
+    primary: string;
+    secondary: string;
+    accent?: string;
+    details?: Array<{ color: string; positions: number[][] }>;
+  };
+  arms: {
+    skin: string;
+    clothing: string;
+    detail?: string;
+  };
+  legs: {
+    primary: string;
+    secondary: string;
+    shoes?: string;
+  };
+  accessories?: {
+    hat?: { color: string; style: string };
+    glasses?: { color: string };
+    beard?: { color: string };
+    backpack?: { color: string };
+  };
 }
 
 /**
@@ -22,9 +58,419 @@ export async function generateSkinFromPrompt(
     return generateDemoSkin(prompt);
   }
 
-  // TODO: Integrate with actual AI API (Replicate, Hugging Face, etc.)
-  // For now, fallback to demo generation
-  return generateDemoSkin(prompt);
+  try {
+    // Use Anthropic API to generate skin color scheme
+    const colorScheme = await generateColorSchemeWithAI(prompt, apiKey);
+    return generateSkinFromColorScheme(colorScheme);
+  } catch (error) {
+    console.error('AI generation failed, falling back to demo:', error);
+    return generateDemoSkin(prompt);
+  }
+}
+
+/**
+ * Generate a color scheme using Anthropic's Claude API
+ */
+async function generateColorSchemeWithAI(
+  prompt: string,
+  apiKey: string
+): Promise<SkinColorScheme> {
+  const client = new Anthropic({ apiKey, dangerouslyAllowBrowser: true });
+
+  const systemPrompt = `You are an expert Minecraft skin designer. Generate detailed color schemes for Minecraft skins based on user descriptions.
+
+IMPORTANT: Minecraft skins use a 64x64 pixel layout with specific UV mapping:
+- Head: 8x8x8 pixels (front face at 8,8 to 16,16)
+- Body/Torso: 8x12 pixels (front at 20,20 to 28,32)
+- Arms: 4x12 pixels each
+- Legs: 4x12 pixels each
+- Second layer (overlays) for hat, clothing details
+
+Your response MUST be valid JSON following this exact structure:
+{
+  "head": {
+    "skin": "#hexcolor",
+    "hair": "#hexcolor",
+    "hairHighlight": "#hexcolor (optional)",
+    "eyes": "#hexcolor",
+    "eyeDetail": "#hexcolor (optional)",
+    "mouth": "#hexcolor (optional)"
+  },
+  "body": {
+    "primary": "#hexcolor (main clothing)",
+    "secondary": "#hexcolor (secondary clothing)",
+    "accent": "#hexcolor (optional details)"
+  },
+  "arms": {
+    "skin": "#hexcolor",
+    "clothing": "#hexcolor"
+  },
+  "legs": {
+    "primary": "#hexcolor (pants/main)",
+    "secondary": "#hexcolor (secondary)",
+    "shoes": "#hexcolor (optional)"
+  },
+  "accessories": {
+    "hat": { "color": "#hexcolor", "style": "cap|beanie|none" },
+    "glasses": { "color": "#hexcolor (optional)" },
+    "beard": { "color": "#hexcolor (optional)" }
+  }
+}
+
+Be creative and detailed! Use realistic colors that match the description.`;
+
+  const response = await client.messages.create({
+    model: 'claude-haiku-4-5-20250929',
+    max_tokens: 2048,
+    temperature: 1.0,
+    system: systemPrompt,
+    messages: [
+      {
+        role: 'user',
+        content: `Generate a detailed Minecraft skin color scheme for: "${prompt}"\n\nProvide ONLY the JSON response, no additional text.`,
+      },
+    ],
+  });
+
+  const content = response.content[0];
+  if (content.type !== 'text') {
+    throw new Error('Unexpected response type from API');
+  }
+
+  let jsonText = content.text.trim();
+
+  // Extract JSON if wrapped in markdown code blocks
+  const jsonMatch = jsonText.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
+  if (jsonMatch) {
+    jsonText = jsonMatch[1].trim();
+  }
+
+  const colorScheme = JSON.parse(jsonText) as SkinColorScheme;
+  return colorScheme;
+}
+
+/**
+ * Generate skin image from color scheme
+ */
+function generateSkinFromColorScheme(scheme: SkinColorScheme): Promise<string> {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 64;
+    const ctx = canvas.getContext('2d')!;
+
+    // Clear canvas with transparency
+    ctx.clearRect(0, 0, 64, 64);
+
+    // Draw skin based on color scheme with detailed pixel art
+    drawDetailedSkin(ctx, scheme);
+
+    resolve(canvas.toDataURL('image/png'));
+  });
+}
+
+/**
+ * Draw a detailed Minecraft skin from AI-generated color scheme
+ * Follows the official Minecraft 64x64 skin template layout
+ */
+function drawDetailedSkin(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme): void {
+  // ===== HEAD (8x8x8 pixels) =====
+
+  // Head - Top (8,0 to 16,8)
+  ctx.fillStyle = darkenColor(scheme.head.skin, 0.95);
+  ctx.fillRect(8, 0, 8, 8);
+
+  // Head - Bottom (16,0 to 24,8)
+  ctx.fillStyle = darkenColor(scheme.head.skin, 0.85);
+  ctx.fillRect(16, 0, 8, 8);
+
+  // Head - Right side (0,8 to 8,16)
+  ctx.fillStyle = darkenColor(scheme.head.skin, 0.9);
+  ctx.fillRect(0, 8, 8, 8);
+
+  // Head - Front face (8,8 to 16,16)
+  ctx.fillStyle = scheme.head.skin;
+  ctx.fillRect(8, 8, 8, 8);
+
+  // Head - Left side (16,8 to 24,16)
+  ctx.fillStyle = darkenColor(scheme.head.skin, 0.9);
+  ctx.fillRect(16, 8, 8, 8);
+
+  // Head - Back (24,8 to 32,16)
+  ctx.fillStyle = darkenColor(scheme.head.skin, 0.85);
+  ctx.fillRect(24, 8, 8, 8);
+
+  // Eyes (on front face)
+  ctx.fillStyle = scheme.head.eyes;
+  ctx.fillRect(10, 10, 2, 2); // Left eye
+  ctx.fillRect(14, 10, 2, 2); // Right eye
+
+  if (scheme.head.eyeDetail) {
+    ctx.fillStyle = scheme.head.eyeDetail;
+    ctx.fillRect(10, 10, 1, 1);
+    ctx.fillRect(14, 10, 1, 1);
+  }
+
+  // Mouth
+  if (scheme.head.mouth) {
+    ctx.fillStyle = scheme.head.mouth;
+    ctx.fillRect(10, 13, 4, 1);
+    ctx.fillRect(11, 14, 2, 1);
+  }
+
+  // Beard (if applicable)
+  if (scheme.accessories?.beard) {
+    ctx.fillStyle = scheme.accessories.beard.color;
+    ctx.fillRect(9, 14, 6, 2);
+    // Add to sides
+    ctx.fillRect(1, 14, 6, 2);
+    ctx.fillRect(17, 14, 6, 2);
+  }
+
+  // ===== HAIR/HAT LAYER (Second layer - overlay) =====
+  // Hat layer - Top (40,0 to 48,8)
+  ctx.fillStyle = scheme.head.hair;
+  ctx.fillRect(40, 0, 8, 8);
+
+  // Hat layer - Bottom (48,0 to 56,8)
+  ctx.fillRect(48, 0, 8, 8);
+
+  // Hat layer - Right (32,8 to 40,16)
+  ctx.fillStyle = darkenColor(scheme.head.hair, 0.9);
+  ctx.fillRect(32, 8, 8, 8);
+
+  // Hat layer - Front (40,8 to 48,16)
+  ctx.fillStyle = scheme.head.hair;
+  ctx.fillRect(40, 8, 8, 8);
+
+  // Hair details
+  if (scheme.head.hairHighlight) {
+    ctx.fillStyle = scheme.head.hairHighlight;
+    // Add some highlight pixels
+    for (let i = 0; i < 5; i++) {
+      const x = 40 + Math.floor(Math.random() * 8);
+      const y = Math.floor(Math.random() * 4);
+      ctx.fillRect(x, y, 1, 1);
+    }
+  }
+
+  // Hat layer - Left (48,8 to 56,16)
+  ctx.fillStyle = darkenColor(scheme.head.hair, 0.9);
+  ctx.fillRect(48, 8, 8, 8);
+
+  // Hat layer - Back (56,8 to 64,16)
+  ctx.fillStyle = darkenColor(scheme.head.hair, 0.85);
+  ctx.fillRect(56, 8, 8, 8);
+
+  // Hat accessory
+  if (scheme.accessories?.hat) {
+    ctx.fillStyle = scheme.accessories.hat.color;
+    if (scheme.accessories.hat.style === 'cap') {
+      ctx.fillRect(40, 8, 8, 3); // Cap brim
+    } else if (scheme.accessories.hat.style === 'beanie') {
+      ctx.fillRect(40, 0, 8, 8); // Full coverage
+    }
+  }
+
+  // Glasses
+  if (scheme.accessories?.glasses) {
+    ctx.fillStyle = scheme.accessories.glasses.color;
+    ctx.fillRect(9, 10, 3, 2); // Left lens
+    ctx.fillRect(14, 10, 3, 2); // Right lens
+    ctx.fillRect(12, 10, 2, 1); // Bridge
+  }
+
+  // ===== BODY/TORSO (8x12 pixels) =====
+
+  // Body - Top (20,16 to 28,20)
+  ctx.fillStyle = darkenColor(scheme.body.primary, 0.95);
+  ctx.fillRect(20, 16, 8, 4);
+
+  // Body - Bottom (28,16 to 36,20)
+  ctx.fillStyle = darkenColor(scheme.body.primary, 0.85);
+  ctx.fillRect(28, 16, 8, 4);
+
+  // Body - Right side (16,20 to 20,32)
+  ctx.fillStyle = darkenColor(scheme.body.primary, 0.9);
+  ctx.fillRect(16, 20, 4, 12);
+
+  // Body - Front (20,20 to 28,32)
+  ctx.fillStyle = scheme.body.primary;
+  ctx.fillRect(20, 20, 8, 12);
+
+  // Body - Left side (28,20 to 32,32)
+  ctx.fillStyle = darkenColor(scheme.body.primary, 0.9);
+  ctx.fillRect(28, 20, 4, 12);
+
+  // Body - Back (32,20 to 40,32)
+  ctx.fillStyle = darkenColor(scheme.body.primary, 0.85);
+  ctx.fillRect(32, 20, 8, 12);
+
+  // Clothing details on body
+  if (scheme.body.accent) {
+    ctx.fillStyle = scheme.body.accent;
+    // Collar
+    ctx.fillRect(20, 20, 8, 1);
+    // Buttons or zipper
+    ctx.fillRect(23, 21, 2, 8);
+    // Belt
+    ctx.fillRect(20, 28, 8, 1);
+  }
+
+  if (scheme.body.secondary) {
+    ctx.fillStyle = scheme.body.secondary;
+    // Add stripes or patterns
+    ctx.fillRect(20, 23, 8, 1);
+    ctx.fillRect(20, 26, 8, 1);
+  }
+
+  // ===== ARMS (4x12 pixels each) =====
+
+  // Right Arm - Top (44,16 to 48,20)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.95);
+  ctx.fillRect(44, 16, 4, 4);
+
+  // Right Arm - Bottom (48,16 to 52,20)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.85);
+  ctx.fillRect(48, 16, 4, 4);
+
+  // Right Arm - Right side (40,20 to 44,32)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.9);
+  ctx.fillRect(40, 20, 4, 12);
+
+  // Right Arm - Front (44,20 to 48,32)
+  ctx.fillStyle = scheme.arms.clothing;
+  ctx.fillRect(44, 20, 4, 12);
+
+  // Right Arm - Left side (48,20 to 52,32)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.9);
+  ctx.fillRect(48, 20, 4, 12);
+
+  // Right Arm - Back (52,20 to 56,32)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.85);
+  ctx.fillRect(52, 20, 4, 12);
+
+  // Hand (skin color at bottom of arm)
+  ctx.fillStyle = scheme.arms.skin;
+  ctx.fillRect(44, 28, 4, 4);
+
+  // Left Arm - Top (36,48 to 40,52)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.95);
+  ctx.fillRect(36, 48, 4, 4);
+
+  // Left Arm - Bottom (40,48 to 44,52)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.85);
+  ctx.fillRect(40, 48, 4, 4);
+
+  // Left Arm - Right side (32,52 to 36,64)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.9);
+  ctx.fillRect(32, 52, 4, 12);
+
+  // Left Arm - Front (36,52 to 40,64)
+  ctx.fillStyle = scheme.arms.clothing;
+  ctx.fillRect(36, 52, 4, 12);
+
+  // Left Arm - Left side (40,52 to 44,64)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.9);
+  ctx.fillRect(40, 52, 4, 12);
+
+  // Left Arm - Back (44,52 to 48,64)
+  ctx.fillStyle = darkenColor(scheme.arms.clothing, 0.85);
+  ctx.fillRect(44, 52, 4, 12);
+
+  // Hand
+  ctx.fillStyle = scheme.arms.skin;
+  ctx.fillRect(36, 60, 4, 4);
+
+  // ===== LEGS (4x12 pixels each) =====
+
+  // Right Leg - Top (4,16 to 8,20)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.95);
+  ctx.fillRect(4, 16, 4, 4);
+
+  // Right Leg - Bottom (8,16 to 12,20)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
+  ctx.fillRect(8, 16, 4, 4);
+
+  // Right Leg - Right side (0,20 to 4,32)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
+  ctx.fillRect(0, 20, 4, 12);
+
+  // Right Leg - Front (4,20 to 8,32)
+  ctx.fillStyle = scheme.legs.primary;
+  ctx.fillRect(4, 20, 4, 12);
+
+  // Right Leg - Left side (8,20 to 12,32)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
+  ctx.fillRect(8, 20, 4, 12);
+
+  // Right Leg - Back (12,20 to 16,32)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
+  ctx.fillRect(12, 20, 4, 12);
+
+  // Shoe on right leg
+  if (scheme.legs.shoes) {
+    ctx.fillStyle = scheme.legs.shoes;
+    ctx.fillRect(4, 28, 4, 4);
+  }
+
+  // Left Leg - Top (20,48 to 24,52)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.95);
+  ctx.fillRect(20, 48, 4, 4);
+
+  // Left Leg - Bottom (24,48 to 28,52)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
+  ctx.fillRect(24, 48, 4, 4);
+
+  // Left Leg - Right side (16,52 to 20,64)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
+  ctx.fillRect(16, 52, 4, 12);
+
+  // Left Leg - Front (20,52 to 24,64)
+  ctx.fillStyle = scheme.legs.primary;
+  ctx.fillRect(20, 52, 4, 12);
+
+  // Left Leg - Left side (24,52 to 28,64)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.9);
+  ctx.fillRect(24, 52, 4, 12);
+
+  // Left Leg - Back (28,52 to 32,64)
+  ctx.fillStyle = darkenColor(scheme.legs.primary, 0.85);
+  ctx.fillRect(28, 52, 4, 12);
+
+  // Shoe on left leg
+  if (scheme.legs.shoes) {
+    ctx.fillStyle = scheme.legs.shoes;
+    ctx.fillRect(20, 60, 4, 4);
+  }
+
+  // Add texture and details
+  addPixelArtDetails(ctx, scheme);
+}
+
+/**
+ * Add pixel art details and texture to make the skin more interesting
+ */
+function addPixelArtDetails(ctx: CanvasRenderingContext2D, scheme: SkinColorScheme): void {
+  // Add subtle texture to clothing
+  if (scheme.body.accent) {
+    ctx.fillStyle = scheme.body.accent;
+    // Random detail pixels for texture
+    for (let i = 0; i < 12; i++) {
+      const x = 20 + Math.floor(Math.random() * 8);
+      const y = 21 + Math.floor(Math.random() * 10);
+      if (Math.random() > 0.5) {
+        ctx.fillRect(x, y, 1, 1);
+      }
+    }
+  }
+
+  // Add shading to legs
+  if (scheme.legs.secondary) {
+    ctx.fillStyle = scheme.legs.secondary;
+    ctx.fillRect(4, 24, 4, 1);
+    ctx.fillRect(20, 56, 4, 1);
+  }
 }
 
 /**
