@@ -1600,6 +1600,26 @@ function drawSkinTemplate(
   ctx.fillStyle = darkenColor(colors.secondary, 0.85);
   ctx.fillRect(12, 20, 4, 12);
 
+  // Right Leg Shoes (bottom 4 pixels)
+  ctx.fillStyle = colors.accent;
+  ctx.fillRect(4, 28, 4, 4);   // Front
+  ctx.fillRect(0, 28, 4, 4);   // Right side
+  ctx.fillRect(8, 28, 4, 4);   // Left side
+  ctx.fillRect(12, 28, 4, 4);  // Back
+
+  // Shoe laces (lighter accent)
+  const lacesColor = lightenColor(colors.accent, 1.3);
+  ctx.fillStyle = lacesColor;
+  ctx.fillRect(5, 28, 2, 2); // Laces on front
+
+  // Shoe sole (darker)
+  const soleColor = darkenColor(colors.accent, 0.7);
+  ctx.fillStyle = soleColor;
+  ctx.fillRect(4, 31, 4, 1);  // Front sole
+  ctx.fillRect(0, 31, 4, 1);  // Right side sole
+  ctx.fillRect(8, 31, 4, 1);  // Left side sole
+  ctx.fillRect(12, 31, 4, 1); // Back sole
+
   // ===== LEFT LEG (4x12 pixels) =====
   // Top (20,48 to 24,52)
   ctx.fillStyle = darkenColor(colors.secondary, 0.95);
@@ -1625,6 +1645,24 @@ function drawSkinTemplate(
   ctx.fillStyle = darkenColor(colors.secondary, 0.85);
   ctx.fillRect(28, 52, 4, 12);
 
+  // Left Leg Shoes (bottom 4 pixels)
+  ctx.fillStyle = colors.accent;
+  ctx.fillRect(20, 60, 4, 4);  // Front
+  ctx.fillRect(16, 60, 4, 4);  // Right side
+  ctx.fillRect(24, 60, 4, 4);  // Left side
+  ctx.fillRect(28, 60, 4, 4);  // Back
+
+  // Shoe laces (lighter accent)
+  ctx.fillStyle = lacesColor;
+  ctx.fillRect(21, 60, 2, 2); // Laces on front
+
+  // Shoe sole (darker)
+  ctx.fillStyle = soleColor;
+  ctx.fillRect(20, 63, 4, 1);  // Front sole
+  ctx.fillRect(16, 63, 4, 1);  // Right side sole
+  ctx.fillRect(24, 63, 4, 1);  // Left side sole
+  ctx.fillRect(28, 63, 4, 1);  // Back sole
+
   // Add shading and details
   addSkinDetails(ctx, colors);
 }
@@ -1645,9 +1683,9 @@ function addSkinDetails(
   // Belt
   ctx.fillRect(20, 27, 8, 1);
 
-  // Shoe details
-  ctx.fillRect(4, 20, 4, 1);
-  ctx.fillRect(20, 52, 4, 1);
+  // Pants cuffs (not shoes - shoes are drawn separately above)
+  ctx.fillRect(4, 27, 4, 1);
+  ctx.fillRect(20, 59, 4, 1);
 
   // Add some random detail pixels for texture
   const detailColor = darkenColor(colors.primary, 0.95);
